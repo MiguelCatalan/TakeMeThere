@@ -10,8 +10,8 @@ abstract class BasePresenter<VIEW : BaseView> {
         this.view = WeakReference<VIEW>(view)
     }
 
-    fun getView(): VIEW? {
-        return view.get()
+    fun getView(): VIEW {
+        return view.get()!!
     }
 
     abstract fun initialize()
