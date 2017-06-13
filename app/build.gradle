@@ -1,6 +1,6 @@
 apply plugin: 'com.android.application'
-
 apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
 
 android {
 
@@ -32,6 +32,16 @@ dependencies {
     // Google stuff
     implementation 'com.android.support:appcompat-v7:25.4.0'
     implementation 'com.android.support.constraint:constraint-layout:1.0.2'
+
+    // Mapbox Maps SDK
+    api ('com.mapbox.mapboxsdk:mapbox-android-sdk:5.1.0-beta.2@aar') {
+        transitive = true
+        exclude module: 'lost'
+        exclude module: 'mapbox-java-geojson'
+        exclude module: 'mapbox-android-telemetry'
+    }
+
+    api 'com.mapbox.mapboxsdk:mapbox-android-navigation:0.3.1'
 
     // Testing
     testImplementation 'junit:junit:4.12'
