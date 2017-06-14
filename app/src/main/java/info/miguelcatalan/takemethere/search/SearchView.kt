@@ -9,4 +9,5 @@ interface SearchView : BaseView {
     fun drawPickUp(position: LatLng)
     fun drawDropOff(position: LatLng)
     fun showNavigateButton()
+    fun navigateToNavigation(pickUp: LatLng, dropOff: LatLng)
 }

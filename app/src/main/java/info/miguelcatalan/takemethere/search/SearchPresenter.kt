@@ -1,6 +1,5 @@
 package info.miguelcatalan.takemethere.search
 
-import android.util.Log
 import com.mapbox.mapboxsdk.geometry.LatLng
 import info.miguelcatalan.takemethere.base.BasePresenter
 
@@ -44,6 +43,8 @@ class SearchPresenter : BasePresenter<SearchView>() {
     }
 
     fun onNavigatePressed() {
-        Log.i("Test", "cosa cosa ")
+        if (dropOff != null && pickup != null) {
+            getView().navigateToNavigation(pickup!!, dropOff!!)
+        }
     }
 }

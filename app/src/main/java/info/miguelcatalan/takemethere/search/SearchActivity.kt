@@ -1,5 +1,6 @@
 package info.miguelcatalan.takemethere.search
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import com.mapbox.mapboxsdk.annotations.MarkerOptions
@@ -10,6 +11,7 @@ import com.mapbox.mapboxsdk.maps.MapboxMap
 import com.mapbox.mapboxsdk.maps.OnMapReadyCallback
 import info.miguelcatalan.takemethere.R
 import info.miguelcatalan.takemethere.base.BaseActivity
+import info.miguelcatalan.takemethere.navigation.NavigationActivity
 import kotlinx.android.synthetic.main.activity_search.*
 
 
@@ -78,6 +80,13 @@ class SearchActivity : BaseActivity<SearchView, SearchPresenter>(), SearchView, 
 
     override fun showNavigateButton() {
         navigateContainer.visibility = View.VISIBLE
+    }
+
+    override fun navigateToNavigation(pickUp: LatLng, dropOff: LatLng) {
+        val intent = Intent(this, NavigationActivity::class.java)
+        intent.putExtra(NavigationActivity.PICKUP_POSITION, pickUp)
+        intent.putExtra(NavigationActivity.DROPOFF_POSITION, dropOff)
+        startActivity(intent)
     }
 
 }
