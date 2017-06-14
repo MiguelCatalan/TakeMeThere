@@ -10,13 +10,20 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
-        <activity android:name=".search.SearchActivity">
+        <activity
+            android:name=".search.SearchActivity"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity
+            android:name=".navigation.NavigationActivity"
+            android:theme="@style/AppTheme.NoToolBar"
+            android:screenOrientation="portrait" />
     </application>
 
 </manifest>
