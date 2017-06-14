@@ -6,9 +6,13 @@ import android.view.View
 import com.mapbox.mapboxsdk.annotations.MarkerOptions
 import com.mapbox.mapboxsdk.camera.CameraPosition
 import com.mapbox.mapboxsdk.camera.CameraUpdateFactory
+import com.mapbox.mapboxsdk.constants.MyLocationTracking
 import com.mapbox.mapboxsdk.geometry.LatLng
 import com.mapbox.mapboxsdk.maps.MapboxMap
 import com.mapbox.mapboxsdk.maps.OnMapReadyCallback
+import com.mapbox.services.android.telemetry.location.AndroidLocationEngine
+import com.mapbox.services.android.telemetry.location.LocationEnginePriority
+import com.mapbox.services.android.telemetry.permissions.PermissionsManager
 import info.miguelcatalan.takemethere.R
 import info.miguelcatalan.takemethere.base.BaseActivity
 import info.miguelcatalan.takemethere.navigation.NavigationActivity
@@ -44,10 +48,44 @@ class SearchActivity : BaseActivity<SearchView, SearchPresenter>(), SearchView, 
         }
     }
 
+    public override fun onPause() {
+        super.onPause()
+        mapView.onPause()
+    }
+
+    override fun onStart() {
+        super.onStart()
+        mapView.onStart()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        mapView.onStop()
+    }
+
+    override fun onLowMemory() {
+        super.onLowMemory()
+        mapView.onLowMemory()
+    }
+
     override fun onMapReady(mapboxMap: MapboxMap) {
         mapboxMap.setOnMapClickListener {
             getPresenter().onMapPressed(it)
         }
+
+        val locationEngine = AndroidLocationEngine(this)
+        locationEngine.interval = 0
+        locationEngine.priority = LocationEnginePriority.HIGH_ACCURACY
+        locationEngine.fastestInterval = 1000
+        locationEngine.activate()
+
+        if (PermissionsManager.areLocationPermissionsGranted(this)) {
+            mapboxMap.isMyLocationEnabled = true
+            mapboxMap.trackingSettings.myLocationTrackingMode = MyLocationTracking.TRACKING_FOLLOW
+            mapboxMap.trackingSettings.setDismissAllTrackingOnGesture(false)
+        }
+        mapboxMap.moveCamera(CameraUpdateFactory.zoomBy(12.0))
+        mapboxMap.setLocationSource(locationEngine)
 
         this.mapboxMap = mapboxMap
         getPresenter().onMapReady()
@@ -66,12 +104,6 @@ class SearchActivity : BaseActivity<SearchView, SearchPresenter>(), SearchView, 
         mapboxMap?.clear()
     }
 
-    override fun drawPickUp(position: LatLng) {
-        mapboxMap?.addMarker(MarkerOptions()
-                .position(position)
-                .title("PickUp"))
-    }
-
     override fun drawDropOff(position: LatLng) {
         mapboxMap?.addMarker(MarkerOptions()
                 .position(position)
@@ -82,9 +114,8 @@ class SearchActivity : BaseActivity<SearchView, SearchPresenter>(), SearchView, 
         navigateContainer.visibility = View.VISIBLE
     }
 
-    override fun navigateToNavigation(pickUp: LatLng, dropOff: LatLng) {
+    override fun navigateToNavigation(dropOff: LatLng) {
         val intent = Intent(this, NavigationActivity::class.java)
-        intent.putExtra(NavigationActivity.PICKUP_POSITION, pickUp)
         intent.putExtra(NavigationActivity.DROPOFF_POSITION, dropOff)
         startActivity(intent)
     }

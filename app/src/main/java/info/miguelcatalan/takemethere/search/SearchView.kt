@@ -6,8 +6,7 @@ import info.miguelcatalan.takemethere.base.BaseView
 interface SearchView : BaseView {
     fun centerMapAt(latitude: Double, longitude: Double, zoom: Double)
     fun clearMap()
-    fun drawPickUp(position: LatLng)
     fun drawDropOff(position: LatLng)
     fun showNavigateButton()
-    fun navigateToNavigation(pickUp: LatLng, dropOff: LatLng)
+    fun navigateToNavigation(dropOff: LatLng)
 }
