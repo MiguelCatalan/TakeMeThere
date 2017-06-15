@@ -84,6 +84,7 @@ class SearchActivity : BaseActivity<SearchView, SearchPresenter>(), SearchView, 
             mapboxMap.trackingSettings.myLocationTrackingMode = MyLocationTracking.TRACKING_FOLLOW
             mapboxMap.trackingSettings.setDismissAllTrackingOnGesture(false)
         }
+
         mapboxMap.moveCamera(CameraUpdateFactory.zoomBy(12.0))
         mapboxMap.setLocationSource(locationEngine)
 
@@ -116,6 +117,11 @@ class SearchActivity : BaseActivity<SearchView, SearchPresenter>(), SearchView, 
 
     override fun navigateToNavigation(dropOff: LatLng) {
         val intent = Intent(this, NavigationActivity::class.java)
+        intent.putExtra(
+                NavigationActivity.PICKUP_POSITION,
+                LatLng(
+                        mapboxMap?.myLocation?.latitude!!,
+                        mapboxMap?.myLocation?.longitude!!))
         intent.putExtra(NavigationActivity.DROPOFF_POSITION, dropOff)
         startActivity(intent)
     }
