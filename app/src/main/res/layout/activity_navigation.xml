@@ -12,4 +12,12 @@
         app:mapbox_cameraZoom="14"
         app:mapbox_styleUrl="@string/mapbox_style_mapbox_streets" />
 
+    <info.miguelcatalan.takemethere.navigation.incications.IndicationsView
+        android:id="@+id/indicatorView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="112dp"
+        android:layout_margin="16dp"
+        android:visibility="gone" />
+
 </FrameLayout>

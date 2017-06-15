@@ -3,6 +3,7 @@ package info.miguelcatalan.takemethere.navigation
 import android.content.Context
 import android.graphics.Color
 import android.os.Bundle
+import android.view.View
 import android.widget.Toast
 import com.mapbox.mapboxsdk.annotations.Polyline
 import com.mapbox.mapboxsdk.annotations.PolylineOptions
@@ -13,6 +14,7 @@ import com.mapbox.mapboxsdk.maps.MapboxMap
 import com.mapbox.mapboxsdk.maps.OnMapReadyCallback
 import com.mapbox.services.Constants.PRECISION_6
 import com.mapbox.services.api.directions.v5.models.DirectionsRoute
+import com.mapbox.services.api.directions.v5.models.LegStep
 import com.mapbox.services.commons.geojson.LineString
 import info.miguelcatalan.takemethere.R
 import info.miguelcatalan.takemethere.base.BaseActivity
@@ -20,9 +22,10 @@ import kotlinx.android.synthetic.main.activity_navigation.*
 
 class NavigationActivity : BaseActivity<NavigationView, NavigationPresenter>(), NavigationView, OnMapReadyCallback {
     companion object {
-        const val PICKUP_POSITION = "pickup_position"
-        const val DROPOFF_POSITION = "dropoff_position"
 
+        const val PICKUP_POSITION = "pickup_position"
+
+        const val DROPOFF_POSITION = "dropoff_position"
         const val TRACK_WIDTH = 9f
     }
 
@@ -48,6 +51,8 @@ class NavigationActivity : BaseActivity<NavigationView, NavigationPresenter>(), 
     }
 
     override fun onMapReady(mapboxMap: MapboxMap?) {
+        mapboxMap?.isMyLocationEnabled = true
+        mapboxMap?.uiSettings?.isCompassEnabled = false
         this.mapboxMap = mapboxMap
         getPresenter().onMapReady()
     }
@@ -133,6 +138,22 @@ class NavigationActivity : BaseActivity<NavigationView, NavigationPresenter>(), 
                 .build()
 
         mapboxMap?.easeCamera(CameraUpdateFactory.newCameraPosition(cameraPosition), 1000, false)
+    }
+
+    override fun startSteps(currentStep: LegStep) {
+        indicatorView.visibility = View.VISIBLE
+        indicatorView.setManeuverDistance(currentStep.distance.toString(), "meters")
+        indicatorView.setManeuverTurn(currentStep.maneuver.instruction)
+    }
+
+    override fun updateStep(currentStep: LegStep) {
+        indicatorView.visibility = View.VISIBLE
+        indicatorView.setManeuverDistance(currentStep.distance.toString(), "meters")
+        indicatorView.setManeuverTurn(currentStep.maneuver.instruction)
+    }
+
+    override fun updateDistance(distance: Double) {
+        indicatorView.setManeuverDistance(distance.toString(), "meters")
     }
 
 }

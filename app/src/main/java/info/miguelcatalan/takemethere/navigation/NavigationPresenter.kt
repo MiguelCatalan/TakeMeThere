@@ -4,6 +4,10 @@ import android.location.Location
 import com.mapbox.mapboxsdk.Mapbox
 import com.mapbox.mapboxsdk.geometry.LatLng
 import com.mapbox.services.android.navigation.v5.MapboxNavigation
+import com.mapbox.services.android.navigation.v5.NavigationConstants.DEPART_ALERT_LEVEL
+import com.mapbox.services.android.navigation.v5.NavigationConstants.HIGH_ALERT_LEVEL
+import com.mapbox.services.android.navigation.v5.NavigationConstants.LOW_ALERT_LEVEL
+import com.mapbox.services.android.navigation.v5.NavigationConstants.MEDIUM_ALERT_LEVEL
 import com.mapbox.services.android.navigation.v5.RouteProgress
 import com.mapbox.services.android.telemetry.location.AndroidLocationEngine
 import com.mapbox.services.android.telemetry.location.LocationEnginePriority
@@ -38,6 +42,10 @@ class NavigationPresenter : BasePresenter<NavigationView>() {
             location, routeProgress ->
             onProgressChanged(location, routeProgress)
         }
+        navigation?.addAlertLevelChangeListener {
+            alertLevel, routeProgress ->
+            onAlertLevelChanged(alertLevel, routeProgress)
+        }
 
         directionsRoute?.let {
             navigation?.startNavigation(directionsRoute)
@@ -57,6 +65,24 @@ class NavigationPresenter : BasePresenter<NavigationView>() {
                 TurfConstants.UNIT_METERS)
 
         getView().easeCamera(60.0, 17.0, LatLng(targetPosition.latitude, targetPosition.longitude), location.bearing.toDouble())
+    }
+
+    private fun onAlertLevelChanged(alertLevel: Int, routeProgress: RouteProgress?) {
+        if (alertLevel == DEPART_ALERT_LEVEL) {
+            routeProgress?.currentLegProgress?.currentStepProgress?.step()?.let {
+                getView().startSteps(it)
+            }
+        } else if (alertLevel == HIGH_ALERT_LEVEL || alertLevel == MEDIUM_ALERT_LEVEL || alertLevel == LOW_ALERT_LEVEL) {
+            routeProgress?.currentLegProgress?.currentStepProgress?.step()?.let {
+                getView().updateStep(it)
+            }
+        }
+
+        routeProgress?.currentLeg?.distance
+
+        routeProgress?.currentLegProgress?.currentStepProgress?.distanceRemaining?.let {
+            getView().updateDistance(it)
+        }
     }
 
     fun onMapReady() {
