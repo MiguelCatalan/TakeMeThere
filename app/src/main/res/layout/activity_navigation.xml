@@ -13,6 +13,15 @@
         app:mapbox_cameraZoom="14"
         app:mapbox_styleUrl="@string/mapbox_style_mapbox_streets" />
 
+    <ImageView
+        android:id="@+id/positionView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="65dp"
+        android:visibility="gone"
+        app:srcCompat="@drawable/position_indicator" />
+
     <info.miguelcatalan.takemethere.navigation.incications.IndicationsView
         android:id="@+id/indicatorView"
         android:layout_width="match_parent"

@@ -38,7 +38,7 @@ class NavigationActivity : BaseActivity<NavigationView, NavigationPresenter>(), 
 
     private var routeLine: Polyline? = null
     private var previousRotation: Float = 0f
-    private var  calculatingDialog: MaterialDialog? = null
+    private var calculatingDialog: MaterialDialog? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -67,7 +67,6 @@ class NavigationActivity : BaseActivity<NavigationView, NavigationPresenter>(), 
     }
 
     override fun onMapReady(mapboxMap: MapboxMap?) {
-        mapboxMap?.isMyLocationEnabled = true
         mapboxMap?.uiSettings?.isCompassEnabled = false
         this.mapboxMap = mapboxMap
         getPresenter().onMapReady()
@@ -157,12 +156,14 @@ class NavigationActivity : BaseActivity<NavigationView, NavigationPresenter>(), 
     }
 
     override fun startSteps(currentStep: LegStep) {
+        positionView.visibility = View.VISIBLE
         indicatorView.visibility = View.VISIBLE
         indicatorView.setManeuverDistance(getFormattedDistance(currentStep.distance))
         indicatorView.setManeuverTurn(currentStep.maneuver.instruction)
     }
 
     override fun updateStep(currentStep: LegStep) {
+        positionView.visibility = View.VISIBLE
         indicatorView.visibility = View.VISIBLE
         indicatorView.setManeuverDistance(getFormattedDistance(currentStep.distance))
         indicatorView.setManeuverTurn(currentStep.maneuver.instruction)
