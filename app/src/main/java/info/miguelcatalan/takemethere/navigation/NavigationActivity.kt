@@ -5,6 +5,7 @@ import android.graphics.Color
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
+import com.afollestad.materialdialogs.MaterialDialog
 import com.mapbox.mapboxsdk.annotations.Polyline
 import com.mapbox.mapboxsdk.annotations.PolylineOptions
 import com.mapbox.mapboxsdk.camera.CameraPosition
@@ -37,6 +38,7 @@ class NavigationActivity : BaseActivity<NavigationView, NavigationPresenter>(), 
 
     private var routeLine: Polyline? = null
     private var previousRotation: Float = 0f
+    private var  calculatingDialog: MaterialDialog? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -54,6 +56,14 @@ class NavigationActivity : BaseActivity<NavigationView, NavigationPresenter>(), 
 
     override fun view(): NavigationView {
         return this
+    }
+
+    override fun setupViews() {
+        super.setupViews()
+        calculatingDialog = MaterialDialog.Builder(this)
+                .content(R.string.navigation_recalculating_route)
+                .progress(true, 0)
+                .build()
     }
 
     override fun onMapReady(mapboxMap: MapboxMap?) {
@@ -98,11 +108,11 @@ class NavigationActivity : BaseActivity<NavigationView, NavigationPresenter>(), 
     }
 
     override fun showCalculatingRoute() {
-        Toast.makeText(this, "Calculating route", Toast.LENGTH_SHORT).show()
+        calculatingDialog?.show()
     }
 
     override fun hideCalculatingRoute() {
-        Toast.makeText(this, "Route calculated", Toast.LENGTH_SHORT).show()
+        calculatingDialog?.dismiss()
     }
 
     override fun showErrorCalculatingRoute() {

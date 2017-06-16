@@ -45,6 +45,9 @@ class NavigationPresenter : BasePresenter<NavigationView>() {
             alertLevel, routeProgress ->
             onAlertLevelChanged(alertLevel, routeProgress)
         }
+        navigation?.addOffRouteListener {
+            onOffRoute(it)
+        }
 
         directionsRoute?.let {
             navigation?.startNavigation(directionsRoute)
@@ -54,6 +57,15 @@ class NavigationPresenter : BasePresenter<NavigationView>() {
 
         pickUp = getView().getPickUpLocation()
         dropOff = getView().getDropOffLocation()
+    }
+
+    private fun onOffRoute(newUserLocation: Location?) {
+        newUserLocation?.let {
+            val pickup = it
+            dropOff?.let {
+                getRoute(LatLng(pickup.latitude, pickup.longitude), it)
+            }
+        }
     }
 
     private fun onProgressChanged(location: Location, routeProgress: RouteProgress) {
