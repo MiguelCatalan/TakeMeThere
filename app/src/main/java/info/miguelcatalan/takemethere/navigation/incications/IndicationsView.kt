@@ -34,10 +34,9 @@ class IndicationsView : FrameLayout {
         maneuverRoad.text = maneuver
     }
 
-    fun setManeuverDistance(distance: String, unit: String) {
-        val displayText = distance + " " + unit
+    fun setManeuverDistance(displayText: String) {
         val span = SpannableString(displayText)
-        var unitStart = displayText.indexOf(" " + unit)
+        var unitStart = displayText.indexOf(" ")
         if (unitStart < 1) {
             unitStart = displayText.length
         }

@@ -65,6 +65,8 @@ class NavigationPresenter : BasePresenter<NavigationView>() {
                 TurfConstants.UNIT_METERS)
 
         getView().easeCamera(60.0, 17.0, LatLng(targetPosition.latitude, targetPosition.longitude), location.bearing.toDouble())
+
+        getView().updateProgress(routeProgress.fractionTraveled * 100, routeProgress.durationRemaining, routeProgress.distanceRemaining)
     }
 
     private fun onAlertLevelChanged(alertLevel: Int, routeProgress: RouteProgress?) {

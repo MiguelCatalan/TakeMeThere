@@ -19,4 +19,5 @@ interface NavigationView : BaseView {
     fun updateStep(currentStep: LegStep)
     fun updateDistance(distance: Double)
     fun startSteps(currentStep: LegStep)
+    fun updateProgress(fractionTraveled: Float, durationRemaining: Double, distanceRemaining: Double)
 }
