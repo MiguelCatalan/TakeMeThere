@@ -4,6 +4,9 @@ import android.location.Location
 import com.mapbox.mapboxsdk.Mapbox
 import com.mapbox.mapboxsdk.geometry.LatLng
 import com.mapbox.services.android.navigation.v5.MapboxNavigation
+import com.mapbox.services.android.navigation.v5.NavigationConstants.DEPART_ALERT_LEVEL
+import com.mapbox.services.android.navigation.v5.NavigationConstants.HIGH_ALERT_LEVEL
+import com.mapbox.services.android.navigation.v5.NavigationConstants.MEDIUM_ALERT_LEVEL
 import com.mapbox.services.android.navigation.v5.RouteProgress
 import com.mapbox.services.android.telemetry.location.AndroidLocationEngine
 import com.mapbox.services.android.telemetry.location.LocationEnginePriority
@@ -38,6 +41,13 @@ class NavigationPresenter : BasePresenter<NavigationView>() {
             location, routeProgress ->
             onProgressChanged(location, routeProgress)
         }
+        navigation?.addAlertLevelChangeListener {
+            alertLevel, routeProgress ->
+            onAlertLevelChanged(alertLevel, routeProgress)
+        }
+        navigation?.addOffRouteListener {
+            onOffRoute(it)
+        }
 
         directionsRoute?.let {
             navigation?.startNavigation(directionsRoute)
@@ -49,6 +59,15 @@ class NavigationPresenter : BasePresenter<NavigationView>() {
         dropOff = getView().getDropOffLocation()
     }
 
+    private fun onOffRoute(newUserLocation: Location?) {
+        newUserLocation?.let {
+            val pickup = it
+            dropOff?.let {
+                getRoute(LatLng(pickup.latitude, pickup.longitude), it)
+            }
+        }
+    }
+
     private fun onProgressChanged(location: Location, routeProgress: RouteProgress) {
         val targetPosition: Position = TurfMeasurement.destination(
                 Position.fromCoordinates(location.longitude, location.latitude),
@@ -57,6 +76,24 @@ class NavigationPresenter : BasePresenter<NavigationView>() {
                 TurfConstants.UNIT_METERS)
 
         getView().easeCamera(60.0, 17.0, LatLng(targetPosition.latitude, targetPosition.longitude), location.bearing.toDouble())
+
+        getView().updateProgress(routeProgress.fractionTraveled * 100, routeProgress.durationRemaining, routeProgress.distanceRemaining)
+    }
+
+    private fun onAlertLevelChanged(alertLevel: Int, routeProgress: RouteProgress?) {
+        if (alertLevel == DEPART_ALERT_LEVEL) {
+            routeProgress?.currentLegProgress?.upComingStep?.let {
+                getView().startSteps(it)
+            }
+        } else if (alertLevel == HIGH_ALERT_LEVEL || alertLevel == MEDIUM_ALERT_LEVEL) {
+            routeProgress?.currentLegProgress?.upComingStep?.let {
+                getView().updateStep(it)
+            }
+        }
+
+        routeProgress?.currentLegProgress?.upComingStep?.distance?.let {
+            getView().updateDistance(it)
+        }
     }
 
     fun onMapReady() {
