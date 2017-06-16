@@ -18,24 +18,26 @@ import com.mapbox.services.api.directions.v5.models.LegStep
 import com.mapbox.services.commons.geojson.LineString
 import info.miguelcatalan.takemethere.R
 import info.miguelcatalan.takemethere.base.BaseActivity
+import info.miguelcatalan.takemethere.utils.ManeuverIndicator
 import kotlinx.android.synthetic.main.activity_navigation.*
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
 
 class NavigationActivity : BaseActivity<NavigationView, NavigationPresenter>(), NavigationView, OnMapReadyCallback {
-
     companion object {
 
         const val PICKUP_POSITION = "pickup_position"
+
         const val DROPOFF_POSITION = "dropoff_position"
         const val TRACK_WIDTH = 9f
-
     }
 
     private var mapboxMap: MapboxMap? = null
 
     private var routeLine: Polyline? = null
+    private var previousRotation: Float = 0f
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         mapView.onCreate(savedInstanceState)
@@ -154,6 +156,13 @@ class NavigationActivity : BaseActivity<NavigationView, NavigationPresenter>(), 
         indicatorView.visibility = View.VISIBLE
         indicatorView.setManeuverDistance(getFormattedDistance(currentStep.distance))
         indicatorView.setManeuverTurn(currentStep.maneuver.instruction)
+        currentStep.maneuver?.let {
+            if (it.type != null && it.modifier != null) {
+                indicatorView.setManeuverIndicator(ManeuverIndicator.getManeuverIndicator(
+                        it.type,
+                        it.modifier))
+            }
+        }
     }
 
     override fun updateDistance(distance: Double) {
@@ -190,7 +199,7 @@ class NavigationActivity : BaseActivity<NavigationView, NavigationPresenter>(), 
         val calendar = Calendar.getInstance()
         calendar.add(Calendar.SECOND, time.toInt())
 
-        return SimpleDateFormat("hh:mm a", Locale("es_ES")).format(calendar.time)
+        return SimpleDateFormat("hh:mm a,", Locale("es_ES")).format(calendar.time)
     }
 
 }

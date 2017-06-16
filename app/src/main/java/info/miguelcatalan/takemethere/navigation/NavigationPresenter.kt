@@ -6,7 +6,6 @@ import com.mapbox.mapboxsdk.geometry.LatLng
 import com.mapbox.services.android.navigation.v5.MapboxNavigation
 import com.mapbox.services.android.navigation.v5.NavigationConstants.DEPART_ALERT_LEVEL
 import com.mapbox.services.android.navigation.v5.NavigationConstants.HIGH_ALERT_LEVEL
-import com.mapbox.services.android.navigation.v5.NavigationConstants.LOW_ALERT_LEVEL
 import com.mapbox.services.android.navigation.v5.NavigationConstants.MEDIUM_ALERT_LEVEL
 import com.mapbox.services.android.navigation.v5.RouteProgress
 import com.mapbox.services.android.telemetry.location.AndroidLocationEngine
@@ -71,18 +70,16 @@ class NavigationPresenter : BasePresenter<NavigationView>() {
 
     private fun onAlertLevelChanged(alertLevel: Int, routeProgress: RouteProgress?) {
         if (alertLevel == DEPART_ALERT_LEVEL) {
-            routeProgress?.currentLegProgress?.currentStepProgress?.step()?.let {
+            routeProgress?.currentLegProgress?.upComingStep?.let {
                 getView().startSteps(it)
             }
-        } else if (alertLevel == HIGH_ALERT_LEVEL || alertLevel == MEDIUM_ALERT_LEVEL || alertLevel == LOW_ALERT_LEVEL) {
-            routeProgress?.currentLegProgress?.currentStepProgress?.step()?.let {
+        } else if (alertLevel == HIGH_ALERT_LEVEL || alertLevel == MEDIUM_ALERT_LEVEL) {
+            routeProgress?.currentLegProgress?.upComingStep?.let {
                 getView().updateStep(it)
             }
         }
 
-        routeProgress?.currentLeg?.distance
-
-        routeProgress?.currentLegProgress?.currentStepProgress?.distanceRemaining?.let {
+        routeProgress?.currentLegProgress?.upComingStep?.distance?.let {
             getView().updateDistance(it)
         }
     }

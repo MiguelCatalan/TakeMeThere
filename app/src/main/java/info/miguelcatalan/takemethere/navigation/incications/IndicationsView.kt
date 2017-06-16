@@ -8,6 +8,7 @@ import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.widget.FrameLayout
 import info.miguelcatalan.takemethere.R
+import info.miguelcatalan.takemethere.utils.DrawableUtils
 import kotlinx.android.synthetic.main.view_indications.view.*
 
 
@@ -48,7 +49,7 @@ class IndicationsView : FrameLayout {
         maneuverDistance.text = span
     }
 
-    fun setManeuverIndicator(maneuver: String) {
-
+    fun setManeuverIndicator(maneuver: Int) {
+        maneuverIndicator.setImageDrawable(DrawableUtils.getDrawable(context, maneuver))
     }
 }
